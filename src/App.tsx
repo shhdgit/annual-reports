@@ -21,19 +21,49 @@ import "./App.css";
 
 interface UserInfo {}
 
+const Prefetch: React.FC<{ srcs: string[] }> = ({ srcs }) => {
+  return (
+    <>
+      {srcs.map((src) => (
+        <img key={src} style={{ display: "none" }} src={src} alt="" />
+      ))}
+    </>
+  );
+};
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [selectedItem, setSelectedItem] = useState(0);
 
   return !loggedIn ? (
-    <Page1 onLogin={() => setLoggedIn(true)} />
+    <>
+      <Page1 onLogin={() => setLoggedIn(true)} />
+      <Prefetch
+        srcs={[
+          page1,
+          page2,
+          page3,
+          page4,
+          page5,
+          page6,
+          rocket,
+          rocketIcon,
+          spark,
+          titlebrand,
+          page6_1,
+          page6_2,
+          page6_3,
+          page6_4,
+          analyze,
+        ]}
+      />
+    </>
   ) : (
     <Carousel
       className="App"
       axis="vertical"
       preventMovementUntilSwipeScrollTolerance
       emulateTouch
-      swipeScrollTolerance={100}
       showArrows={false}
       showStatus={false}
       showIndicators={false}
@@ -81,7 +111,7 @@ const Page1: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
   return (
     <PageItem
       backgroundURL={page1}
-      style={{ padding: "100px 4px 0 4px", textAlign: "center" }}
+      style={{ padding: "60px 4px 0 4px", textAlign: "center" }}
     >
       <p>This year has been rough,</p>
       <p>But we've shown our stuff.</p>
@@ -104,7 +134,7 @@ const Page1: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
 
 const Page2: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
   return (
-    <PageItem backgroundURL={page2} style={{ paddingTop: "100px" }}>
+    <PageItem backgroundURL={page2} style={{ paddingTop: "60px" }}>
       <p>
         Hi <span className="emphasis-text">Qiao.dan</span>
       </p>
@@ -125,7 +155,7 @@ const Page2: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
 
 const Page3: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
   return (
-    <PageItem backgroundURL={page3} style={{ paddingTop: "100px" }}>
+    <PageItem backgroundURL={page3} style={{ paddingTop: "60px" }}>
       <p>
         <span className="emphasis-text">Jul 23,2022</span> was your busiest day.
         You had a total of <span className="emphasis-text">44</span> page
@@ -144,7 +174,7 @@ const Page3: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
 
 const Page4: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
   return (
-    <PageItem backgroundURL={page4} style={{ paddingTop: "100px" }}>
+    <PageItem backgroundURL={page4} style={{ paddingTop: "60px" }}>
       <p>The top 3 clusters you visited most are:</p>
       <br />
       <p className="emphasis-text">ossinsight</p>
@@ -157,7 +187,7 @@ const Page4: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
 
 const Page5: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
   return (
-    <PageItem backgroundURL={page5} style={{ paddingTop: "100px" }}>
+    <PageItem backgroundURL={page5} style={{ paddingTop: "60px" }}>
       <p>This year,</p>
       <p>
         you viewed Metric <span className="emphasis-text">435</span> times; and
@@ -180,7 +210,7 @@ const Page6: React.FC<{
   onRetry: (index: number) => void;
 }> = ({ userInfo, onRetry }) => {
   return (
-    <PageItem backgroundURL={page6} style={{ paddingTop: "74px" }}>
+    <PageItem backgroundURL={page6} style={{ paddingTop: "20px" }}>
       <p>
         <span className="emphasis-text" style={{ fontSize: "22px" }}>
           Qiao Dan,
