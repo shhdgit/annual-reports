@@ -40,6 +40,12 @@
   'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
 }
 
+.loading-btn {
+  background-color: rgb(233, 236, 239) !important;
+  color: rgb(173, 181, 189) !important;
+  cursor: not-allowed;
+}
+
 .default-btn {
   display: block;
   height: 46px;
@@ -66,8 +72,9 @@
 
 .rocket {
   position: relative;
-  height: 60px;
-  width: 60px;
+  height: 50px;
+  width: 50px;
+  margin-top: 4px;
   border-radius: 50%;
   background-color: #E33674;
 }
@@ -77,8 +84,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  width: 28px !important;
-  height: 34px !important;
+  width: 24px !important;
+  height: 28px !important;
   margin: auto;
 }
 
@@ -169,19 +176,19 @@
 .page6-records {
   position: relative;
   height: auto;
-  padding: 8px 14px;
+  padding: 6px 12px;
   text-align: left;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
   color: #2B259F;
 }
 
 .page6-records-content {
   text-align: center;
-  font-size: 50px;
+  font-size: 30px;
   font-weight: 700;
   color: #FFFFFF;
-  margin: 10px 0;
+  margin-top: 2px;
 }
 
 .page6-records-days {
@@ -211,13 +218,13 @@
 .page6-detail-item {
   display: flex;
   align-items: center;
-  padding: 10px 0;
+  padding: 4px 0;
   font-size: 14px;
   border-bottom: 1px solid #2B259F;
 }
 .page6-detail-icon {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   margin-right: 20px;
 }
 .page6-detail-icon img {

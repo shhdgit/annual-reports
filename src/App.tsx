@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { default as dayjs } from "dayjs";
+import debounce from "lodash/debounce";
 
 import page1 from "./assets/page1.jpg";
 import page2 from "./assets/page2.jpg";
@@ -71,7 +72,32 @@ const useUserInfo = () => {
 
 function App() {
   const [selectedItem, setSelectedItem] = useState(0);
-  const { userInfo } = useUserInfo();
+  const { userInfo, loading } = useUserInfo();
+  const onWheelScroll = useRef(
+    debounce(
+      (e) => {
+        if (e.deltaY > 0) {
+          setSelectedItem((i) => {
+            if (i < 5) {
+              return i + 1;
+            } else {
+              return i;
+            }
+          });
+        } else {
+          setSelectedItem((i) => {
+            if (i > 0) {
+              return i - 1;
+            } else {
+              return i;
+            }
+          });
+        }
+      },
+      100,
+      { leading: true, trailing: false }
+    )
+  );
 
   return !userInfo ? (
     <>
@@ -79,6 +105,7 @@ function App() {
         onLogin={() => {
           auth();
         }}
+        loading={loading}
       />
       <Prefetch
         srcs={[
@@ -100,24 +127,28 @@ function App() {
         ]}
       />
     </>
+  ) : userInfo.joinTime ? (
+    <div onWheel={onWheelScroll.current}>
+      <Carousel
+        className="App"
+        axis="vertical"
+        preventMovementUntilSwipeScrollTolerance
+        emulateTouch
+        showArrows={false}
+        showStatus={false}
+        showIndicators={false}
+        selectedItem={selectedItem}
+        onChange={setSelectedItem}
+      >
+        <Page2 userInfo={userInfo} />
+        <Page3 userInfo={userInfo} />
+        <Page4 userInfo={userInfo} />
+        <Page5 userInfo={userInfo} />
+        <Page6 userInfo={userInfo} onRetry={setSelectedItem} />
+      </Carousel>
+    </div>
   ) : (
-    <Carousel
-      className="App"
-      axis="vertical"
-      preventMovementUntilSwipeScrollTolerance
-      emulateTouch
-      showArrows={false}
-      showStatus={false}
-      showIndicators={false}
-      selectedItem={selectedItem}
-      onChange={setSelectedItem}
-    >
-      <Page2 userInfo={userInfo} />
-      <Page3 userInfo={userInfo} />
-      <Page4 userInfo={userInfo} />
-      <Page5 userInfo={userInfo} />
-      <Page6 userInfo={userInfo} onRetry={setSelectedItem} />
-    </Carousel>
+    <Page2 userInfo={userInfo} />
   );
 }
 
@@ -149,7 +180,10 @@ const SwipeToContinue: React.FC = () => {
   return <p className="swipe">Swipe up to continue</p>;
 };
 
-const Page1: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
+const Page1: React.FC<{ onLogin: () => void; loading: boolean }> = ({
+  onLogin,
+  loading,
+}) => {
   return (
     <PageItem
       backgroundURL={page1}
@@ -162,13 +196,13 @@ const Page1: React.FC<{ onLogin: () => void }> = ({ onLogin }) => {
       <p>We've persevered and adapted,</p>
       <p>Overcoming all that was tasked.</p>
       <button
-        className="primary-btn"
+        className={`primary-btn ${loading ? "loading-btn" : ""}`}
         style={{
           margin: "50px auto 0 auto",
         }}
         onClick={onLogin}
       >
-        Start
+        {loading ? "Login..." : "Start"}
       </button>
     </PageItem>
   );
@@ -181,21 +215,33 @@ const Page2: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
         Hi <span className="emphasis-text">{userInfo.name}</span>
       </p>
       <br />
-      <p>
-        <span className="emphasis-text">
-          {dayjs.unix(userInfo.joinTime).format("MMM d,YYYY")}
-        </span>{" "}
-        was your first day with Clinic.
-      </p>
-      <br />
-      <p>
-        You visited the pages{" "}
-        <span className="emphasis-text">{userInfo.totalDays.count}</span> days
-        and viewed more than{" "}
-        <span className="emphasis-text">{userInfo.totalClusters.count}</span>{" "}
-        clusters.
-      </p>
-      <SwipeToContinue />
+      {userInfo.joinTime ? (
+        <>
+          <p>
+            <span className="emphasis-text">
+              {dayjs.unix(userInfo.joinTime).format("MMM d,YYYY")}
+            </span>{" "}
+            was your first day with Clinic.
+          </p>
+          <br />
+          <p>
+            You visited the pages{" "}
+            <span className="emphasis-text">{userInfo.totalDays.count}</span>{" "}
+            days and viewed more than{" "}
+            <span className="emphasis-text">
+              {userInfo.totalClusters.count}
+            </span>{" "}
+            clusters.
+          </p>
+          <SwipeToContinue />
+        </>
+      ) : (
+        <>
+          <p>Unfortunately, Clinic do not have your usage data for 2022.</p>
+          <br />
+          <p>Try to use more in 2023!</p>
+        </>
+      )}
     </PageItem>
   );
 };
@@ -231,11 +277,15 @@ const Page3: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
         operations that day.
       </p>
       <br />
-      <p>
-        <span className="emphasis-text">{latestDay.format("MMM d,YYYY")}</span>{" "}
-        was the day you stayed up latest, you visited Clinic at{" "}
-        <span className="emphasis-text">{latestDay.format("HH:mm:ss")}</span>.
-      </p>
+      {(latestDay.hour() >= 18 || latestDay.hour() < 6) && (
+        <p>
+          <span className="emphasis-text">
+            {latestDay.format("MMM d,YYYY")}
+          </span>{" "}
+          was the day you stayed up latest, you visited Clinic at{" "}
+          <span className="emphasis-text">{latestDay.format("HH:mm:ss")}</span>.
+        </p>
+      )}
       <SwipeToContinue />
     </PageItem>
   );
@@ -255,6 +305,14 @@ const Page4: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
       <SwipeToContinue />
     </PageItem>
   );
+};
+
+const classMap: {
+  [k: string]: string;
+} = {
+  Tier1: "Super Diagnostician",
+  Tier2: "Senior Diagnostician",
+  Tier3: "Potential Diagnostician",
 };
 
 const Page5: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
@@ -277,7 +335,7 @@ const Page5: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
       </button>
       <div className="title-brand">
         <img src={titlebrand} alt="" />
-        <p className="title-brand-name">{userInfo.class}</p>
+        <p className="title-brand-name">{classMap[userInfo.class]}</p>
       </div>
       <SwipeToContinue />
     </PageItem>
@@ -289,9 +347,12 @@ const Page6: React.FC<{
   onRetry: (index: number) => void;
 }> = ({ userInfo, onRetry }) => {
   return (
-    <PageItem backgroundURL={page6} style={{ paddingTop: "20px" }}>
+    <PageItem
+      backgroundURL={page6}
+      style={{ paddingTop: "20px", fontSize: "14px" }}
+    >
       <p>
-        <span className="emphasis-text" style={{ fontSize: "22px" }}>
+        <span className="emphasis-text" style={{ fontSize: "18px" }}>
           {userInfo.name},
         </span>
       </p>
@@ -302,7 +363,7 @@ const Page6: React.FC<{
           style={{
             margin: "12px 0 21px",
             position: "relative",
-            padding: "20px 26px",
+            padding: "12px 18px",
           }}
         >
           <div className="title-info">
@@ -312,8 +373,14 @@ const Page6: React.FC<{
             >
               <img src={rocketIcon} alt="" />
             </div>
-            <p style={{ fontSize: "22px", fontWeight: 700 }}>
-              {userInfo.class}
+            <p
+              style={{
+                fontSize: "18px",
+                fontWeight: 700,
+                paddingRight: "60px",
+              }}
+            >
+              {classMap[userInfo.class]}
             </p>
           </div>
           <img className="rocket-img" src={rocket} alt="" />
@@ -387,7 +454,7 @@ const formatBeat = (beat: string) => {
         "Beat" {">="}{" "}
         <span
           className="emphasis-text"
-          style={{ fontWeight: 700, fontSize: "24px" }}
+          style={{ fontWeight: 700, fontSize: "18px" }}
         >
           70%
         </span>
