@@ -436,7 +436,7 @@ const Page6: React.FC<{
       <button
         className="primary-btn"
         style={{
-          margin: "42px auto 0 auto",
+          margin: "22px auto 0 auto",
         }}
         onClick={() => onRetry(0)}
       >
@@ -467,7 +467,7 @@ const formatBeat = (beat: string) => {
         "Beat" {">="}{" "}
         <span
           className="emphasis-text"
-          style={{ fontWeight: 700, fontSize: "24px" }}
+          style={{ fontWeight: 700, fontSize: "18px" }}
         >
           50%
         </span>
