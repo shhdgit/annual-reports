@@ -21,7 +21,7 @@ import page6_4 from "./assets/page6-4.png";
 import analyze from "./assets/analyze.png";
 
 import "./App.css";
-import { auth, getInfo } from "./util";
+import { auth, getInfo, isMobile } from "./util";
 
 type UserInfo = any;
 
@@ -73,6 +73,7 @@ const useUserInfo = () => {
 function App() {
   const [selectedItem, setSelectedItem] = useState(0);
   const { userInfo, loading } = useUserInfo();
+  const isMobileFlag = useRef(isMobile());
   const onWheelScroll = useRef(
     debounce(
       (e) => {
@@ -97,6 +98,20 @@ function App() {
       100,
       { leading: true, trailing: false }
     )
+  );
+  const onClick = useRef(
+    debounce(() => {
+      if (isMobileFlag.current) {
+        return;
+      }
+      setSelectedItem((i) => {
+        if (i < 5) {
+          return i + 1;
+        } else {
+          return i;
+        }
+      });
+    }, 100)
   );
 
   return !userInfo ? (
@@ -128,7 +143,7 @@ function App() {
       />
     </>
   ) : userInfo.joinTime ? (
-    <div onWheel={onWheelScroll.current}>
+    <div onWheel={onWheelScroll.current} onClick={onClick.current}>
       <Carousel
         className="App"
         axis="vertical"
@@ -177,7 +192,12 @@ const PageItem: React.FC<
 };
 
 const SwipeToContinue: React.FC = () => {
-  return <p className="swipe">Swipe up to continue</p>;
+  const isMobileFlag = useRef(isMobile());
+  return (
+    <p className="swipe">
+      {isMobileFlag.current ? "Swipe up" : "Click"} to continue
+    </p>
+  );
 };
 
 const Page1: React.FC<{ onLogin: () => void; loading: boolean }> = ({

@@ -35,3 +35,11 @@ export const getInfo = ({ code, state }: { code: string; state: string }) => {
     throw res;
   });
 };
+
+export const isMobile = () => {
+  let flag =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
+  return flag;
+};
