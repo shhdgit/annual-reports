@@ -22,6 +22,9 @@ import analyze from "./assets/analyze.png";
 
 import "./App.css";
 import { auth, getInfo, isMobile } from "./util";
+import { initTelemetry, mixpanel, registerUser } from "./telemetry";
+
+initTelemetry();
 
 type UserInfo = any;
 
@@ -55,6 +58,7 @@ const useUserInfo = () => {
           state,
         });
         setUserInfo(info);
+        registerUser(info.name);
       } catch (e) {
         window.location.search = "";
       } finally {
@@ -79,7 +83,7 @@ function App() {
       (e) => {
         if (e.deltaY > 0) {
           setSelectedItem((i) => {
-            if (i < 5) {
+            if (i < 4) {
               return i + 1;
             } else {
               return i;
@@ -105,7 +109,7 @@ function App() {
         return;
       }
       setSelectedItem((i) => {
-        if (i < 5) {
+        if (i < 4) {
           return i + 1;
         } else {
           return i;
@@ -114,10 +118,18 @@ function App() {
     }, 100)
   );
 
+  useEffect(() => {
+    if (!userInfo) {
+      return;
+    }
+    mixpanel.track(`2022 Annual Report Page View: Page ${selectedItem + 1}`);
+  }, [userInfo, selectedItem]);
+
   return !userInfo ? (
     <>
       <Page1
         onLogin={() => {
+          mixpanel.track("2022 Annual Report: Click Authorization Button");
           auth();
         }}
         loading={loading}
@@ -175,6 +187,7 @@ const PageItem: React.FC<
     >
   >
 > = ({ children, backgroundURL, ...props }) => {
+  const isMobileFlag = useRef(isMobile());
   return (
     <div
       {...props}
@@ -182,7 +195,7 @@ const PageItem: React.FC<
       style={{
         background: `url(${backgroundURL}) no-repeat center`,
         backgroundAttachment: "fixed",
-        backgroundSize: "cover",
+        backgroundSize: isMobileFlag.current ? "cover" : "auto 100%",
         ...props.style,
       }}
     >
@@ -204,6 +217,10 @@ const Page1: React.FC<{ onLogin: () => void; loading: boolean }> = ({
   onLogin,
   loading,
 }) => {
+  useEffect(() => {
+    mixpanel.track(`2022 Annual Report Page View: Welcome Page`);
+  }, []);
+
   return (
     <PageItem
       backgroundURL={page1}
@@ -458,7 +475,11 @@ const Page6: React.FC<{
         style={{
           margin: "22px auto 0 auto",
         }}
-        onClick={() => onRetry(0)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRetry(0);
+          mixpanel.track("2022 Annual Report: Click Retry Button");
+        }}
       >
         Replay
       </button>
