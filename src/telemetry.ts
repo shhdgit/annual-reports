@@ -30,10 +30,10 @@ export function initTelemetry() {
   });
 }
 
-export function registerUser(user: string) {
+export function registerUser(user: string, email: string) {
   mixpanel.identify(user);
   // Must set! Append user and email information to the Mixpanel Users page
-  mixpanel.people.set({ $name: user });
+  mixpanel.people.set({ $name: user, $email: email });
 }
 
 export function createTelemetryAPI<T>(factory: (mixpanel: Mixpanel) => T): T {

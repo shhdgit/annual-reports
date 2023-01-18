@@ -58,7 +58,7 @@ const useUserInfo = () => {
           state,
         });
         setUserInfo(info);
-        registerUser(info.name);
+        registerUser(info.name, info.email);
       } catch (e) {
         window.location.search = "";
       } finally {
