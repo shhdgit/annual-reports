@@ -31,7 +31,7 @@ export function initTelemetry() {
 }
 
 export function registerUser(user: string, email: string) {
-  mixpanel.identify(user);
+  mixpanel.identify(email);
   // Must set! Append user and email information to the Mixpanel Users page
   mixpanel.people.set({ $name: user, $email: email });
 }

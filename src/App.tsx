@@ -307,7 +307,7 @@ const Page3: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
     <PageItem backgroundURL={page3} style={{ paddingTop: "60px" }}>
       <p>
         <span className="emphasis-text">
-          {dayjs(busiestDay.text).format("MMM d,YYYY")}
+          {dayjs(busiestDay.text).format("MMM D,YYYY")}
         </span>{" "}
         was your busiest day. You had a total of{" "}
         <span className="emphasis-text">{busiestDay?.eventsCount}</span> page
@@ -317,7 +317,7 @@ const Page3: React.FC<{ userInfo: UserInfo }> = ({ userInfo }) => {
       {(latestDay.hour() >= 18 || latestDay.hour() < 6) && (
         <p>
           <span className="emphasis-text">
-            {latestDay.format("MMM d,YYYY")}
+            {latestDay.format("MMM D,YYYY")}
           </span>{" "}
           was the day you stayed up latest, you visited Clinic at{" "}
           <span className="emphasis-text">{latestDay.format("HH:mm:ss")}</span>.
